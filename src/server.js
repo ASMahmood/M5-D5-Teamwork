@@ -1,5 +1,7 @@
 const express = require("express");
 const reviewsRoutes = require("./reviews");
+const fileRoutes = require("./files/upload");
+const { join } = require("path");
 const {
   notFoundHandler,
   unauthorizedHandler,
@@ -10,9 +12,13 @@ const {
 
 const server = express();
 const port = 3077;
+const publicFolderPath = join(__dirname, "../public");
 
 server.use(express.json());
+server.use(express.static(publicFolderPath));
+
 server.use("/reviews", reviewsRoutes);
+server.use("/files", fileRoutes);
 
 server.use(notFoundHandler);
 server.use(unauthorizedHandler);
