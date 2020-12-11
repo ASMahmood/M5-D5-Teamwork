@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const uniqid = require("uniqid");
+const { readDB } = require("../lib/utilities");
 
 const router = express.Router();
 
@@ -62,6 +63,27 @@ router.delete("/:id", (req, res) => {
   const deletedProduct = req.body;
   fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
   res.status(201).send(filteredArray);
+});
+
+router.get("/:id/reviews", async (req, res, next) => {
+  try {
+    const reviewDataBase = await readDB(
+      path.join(__dirname, "../reviews/reviews.json")
+    );
+    if (reviewDataBase.length > 0) {
+      const productReviews = reviewDataBase.filter(
+        (review) => review.productID === req.params.id
+      );
+      res.status(201).send(productReviews);
+    } else {
+      const err = {};
+      err.httpStatusCode = 404;
+      err.message = "The review databse is empty!";
+    }
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
 });
 
 module.exports = router;
