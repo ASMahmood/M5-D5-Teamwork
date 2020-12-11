@@ -59,7 +59,6 @@ router.delete("/:id", (req, res) => {
     (product) => product._id !== req.params.id
   );
 
-  const deletedProduct = req.body;
   fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
   res.status(201).send(filteredArray);
 });
