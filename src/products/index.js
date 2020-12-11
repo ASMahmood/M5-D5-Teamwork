@@ -55,6 +55,7 @@ router.put("/:id", (req, res, next) => {
 
     const editedProduct = req.body;
     editedProduct._id = singleProduct[0]._id;
+    editedProduct.createdAt = singleProduct[0].createdAt;
     editedProduct.updatedAt = new Date();
     filteredArray.push(editedProduct);
 
@@ -66,7 +67,7 @@ router.put("/:id", (req, res, next) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
   try {
     const productsArray = readDatabase();
     const singleProduct = productsArray.filter(
@@ -104,7 +105,6 @@ router.get("/:id/reviews", async (req, res, next) => {
     err.httpStatusCode = 404;
     next(err);
   }
-
 });
 
 module.exports = router;
