@@ -1,4 +1,4 @@
-const { writeJson, readJson } = requires("fs-extra"); //TAAKES ASYNC READ/WRITE FILE FUNCTIONS FROM FS-EXTRA PACKAGE
+const { writeJson, readJson } = require("fs-extra"); //TAAKES ASYNC READ/WRITE FILE FUNCTIONS FROM FS-EXTRA PACKAGE
 
 const readDB = async (filepath) => {
   try {
