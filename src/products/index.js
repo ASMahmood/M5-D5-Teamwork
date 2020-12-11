@@ -15,54 +15,74 @@ const readDatabase = () => {
   return productsArray;
 };
 
-router.get("/", (req, res) => {
-  const productsArray = readDatabase();
+router.get("/", (req, res, next) => {
+  try {
+    const productsArray = readDatabase();
 
-  res.send(productsArray);
+    res.send(productsArray);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
 });
 
-router.post("/", (req, res) => {
-  const newProduct = req.body;
-  const productsArray = readDatabase();
+router.post("/", (req, res, next) => {
+  try {
+    const newProduct = req.body;
+    const productsArray = readDatabase();
 
-  newProduct._id = uniqid();
-  newProduct.createdAt = new Date();
-  newProduct.updatedAt = new Date();
-  productsArray.push(newProduct);
-  fs.writeFileSync(productsFilePath, JSON.stringify(productsArray));
-  res.status(201).send(newProduct);
+    newProduct._id = uniqid();
+    newProduct.createdAt = new Date();
+    newProduct.updatedAt = new Date();
+    productsArray.push(newProduct);
+    fs.writeFileSync(productsFilePath, JSON.stringify(productsArray));
+    res.status(201).send(newProduct);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
 });
 
-router.put("/:id", (req, res) => {
-  const productsArray = readDatabase();
-  const singleProduct = productsArray.filter(
-    (product) => product._id === req.params.id
-  );
-  const filteredArray = productsArray.filter(
-    (product) => product._id !== req.params.id
-  );
+router.put("/:id", (req, res, next) => {
+  try {
+    const productsArray = readDatabase();
+    const singleProduct = productsArray.filter(
+      (product) => product._id === req.params.id
+    );
+    const filteredArray = productsArray.filter(
+      (product) => product._id !== req.params.id
+    );
 
-  const editedProduct = req.body;
-  editedProduct._id = singleProduct[0]._id;
-  editedProduct.updatedAt = new Date();
-  filteredArray.push(editedProduct);
+    const editedProduct = req.body;
+    editedProduct._id = singleProduct[0]._id;
+    editedProduct.updatedAt = new Date();
+    filteredArray.push(editedProduct);
 
-  fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
-  res.status(201).send(editedProduct);
+    fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
+    res.status(201).send(editedProduct);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
 });
 
 router.delete("/:id", (req, res) => {
-  const productsArray = readDatabase();
-  const singleProduct = productsArray.filter(
-    (product) => product._id === req.params.id
-  );
-  const filteredArray = productsArray.filter(
-    (product) => product._id !== req.params.id
-  );
+  try {
+    const productsArray = readDatabase();
+    const singleProduct = productsArray.filter(
+      (product) => product._id === req.params.id
+    );
+    const filteredArray = productsArray.filter(
+      (product) => product._id !== req.params.id
+    );
 
-  const deletedProduct = req.body;
-  fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
-  res.status(201).send(filteredArray);
+    const deletedProduct = req.body;
+    fs.writeFileSync(productsFilePath, JSON.stringify(filteredArray));
+    res.status(201).send(filteredArray);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
 });
 
 router.get("/:id/reviews", async (req, res, next) => {
