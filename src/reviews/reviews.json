@@ -1,16 +1,10 @@
 [
   {
-    "comment": "This product looks and feels amazing! I loved it so much I bought another!",
-    "rate": 2,
-    "productID": "thisIsAFakeID",
-    "_id": "59dtt168kik2m7sk",
-    "createdAt": "2020-12-11T09:31:23.251Z"
-  },
-  {
-    "comment": "I was skepical at first, but it turns out it really does what it says on the tin.",
-    "rate": 4,
-    "productID": "differentFakeID",
-    "_id": "59dttam4kik2nb8z",
-    "createdAt": "2020-12-11T09:32:14.386Z"
+    "comment": "This sucks. If you want to waste your money, click PURCHASE. Honsetly, you'd think they would try better after their last failure. Absolutley abysmal",
+    "rate": 1,
+    "productID": "thirdFakeIDButIDeletedTheSecond",
+    "_id": "59dtt6m4kik3k7nv",
+    "modifiedAt": "2020-12-11T09:58:25.481Z",
+    "createdAt": "2020-12-11T09:57:49.387Z"
   }
 ]

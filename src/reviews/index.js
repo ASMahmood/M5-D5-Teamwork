@@ -25,7 +25,7 @@ router.get("/:id", async (req, res, next) => {
     if (selectedReview.length > 0) {
       res.status(201).send(selectedReview);
     } else {
-      throw new Error(error);
+      throw new Error();
     }
     res.status(201).send(reviewsDataBase);
   } catch (error) {
@@ -61,5 +61,51 @@ router.post(
     }
   }
 );
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    const reviewsDataBase = await readDB(reviewsFilePath);
+    const selectedReview = reviewsDataBase.filter(
+      (review) => review._id === req.params.id
+    );
+    if (selectedReview.length > 0) {
+      console.log(selectedReview);
+      const filteredReviews = reviewsDataBase.filter(
+        (review) => review._id !== req.params.id
+      );
+      const alteredReview = req.body;
+      alteredReview._id = selectedReview[0]._id;
+      alteredReview.modifiedAt = new Date();
+      alteredReview.createdAt = selectedReview[0].createdAt;
+      filteredReviews.push(alteredReview);
+      await writeDB(reviewsFilePath, filteredReviews);
+      res.status(201).send(filteredReviews);
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const reviewsDataBase = await readDB(reviewsFilePath);
+    const selectedReview = reviewsDataBase.filter(
+      (review) => review._id === req.params.id
+    );
+    if (selectedReview.length > 0) {
+      const filteredReviews = reviewsDataBase.filter(
+        (review) => review._id !== req.params.id
+      );
+      await writeDB(reviewsFilePath, filteredReviews);
+      res.status(201).send(filteredReviews);
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 module.exports = router;
