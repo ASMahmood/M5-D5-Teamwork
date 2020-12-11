@@ -27,6 +27,20 @@ router.get("/", (req, res, next) => {
   }
 });
 
+router.get("/:id", (req, res, next) => {
+  try {
+    const productsArray = readDatabase();
+    const singleProduct = productsArray.filter(
+      (product) => product._id === req.params.id
+    );
+
+    res.status(201).send(singleProduct);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
+  }
+});
+
 router.post("/", (req, res, next) => {
   try {
     const newProduct = req.body;

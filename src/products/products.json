@@ -27,5 +27,15 @@
     "price": 150,
     "category": "smartphones",
     "_id": "1h8k7a5kik38zpx"
+  },
+  {
+    "name": "Creamy KitKat",
+    "description": "Mmmmm. Creamy!",
+    "brand": "KITKAT",
+    "price": "4",
+    "category": "Food",
+    "_id": "59dtt2c8kikf0dkc",
+    "createdAt": "2020-12-11T15:18:19.307Z",
+    "updatedAt": "2020-12-11T15:18:19.307Z"
   }
 ]
