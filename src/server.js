@@ -11,13 +11,15 @@ const {
   catchAllHandler,
 } = require("./lib/errorHandling");
 
-
 const server = express();
 const port = 3077;
-const publicFolderPath = join(__dirname, "../public");
 
 server.use(express.json());
-server.use(express.static(publicFolderPath));
+
+server.use(
+  "/images",
+  express.static(join(__dirname, "../public/img/products"))
+);
 
 server.use("/products", productsRouter);
 server.use("/reviews", reviewsRoutes);

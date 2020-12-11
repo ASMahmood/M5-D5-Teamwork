@@ -1,7 +1,12 @@
 const express = require("express");
 const multer = require("multer");
-const { writeFile, createReadStream } = require("fs-extra");
-const { join } = require("path");
+const {
+  writeFile,
+  createReadStream,
+  readJSON,
+  writeJSON,
+} = require("fs-extra");
+const { join, extname } = require("path");
 const { pipeline } = require("stream");
 
 const router = express.Router();
@@ -9,22 +14,31 @@ const router = express.Router();
 const upload = multer({});
 
 const productsImagePath = join(__dirname, "../../public/img/products");
+const productsDBFolderPath = join(__dirname, "../products/products.json");
 
 router.post(
   "/:id/upload",
   upload.single("productImg"),
   async (req, res, next) => {
-    console.log(req.params.id);
-    console.log(req.file.originalname);
-    try {
-      await writeFile(
-        join(productsImagePath, req.file.originalname),
-        req.file.buffer
-      );
-      res.send("Image uploaded!");
-    } catch (err) {
-      console.log(err);
-      next(err);
+    const productsDB = await readJSON(productsDBFolderPath);
+    const index = productsDB.findIndex(
+      (product) => product._id === req.params.id
+    );
+
+    if (index !== -1) {
+      const productName = req.params.id + extname(req.file.originalname);
+
+      try {
+        await writeFile(join(productsImagePath, productName), req.file.buffer);
+        productsDB[index].image = `http://localhost:3077/images/${productName}`;
+        await writeJSON(productsDBFolderPath, productsDB);
+        res.send(productsDB[index]);
+      } catch (err) {
+        console.log(err);
+        next(err);
+      }
+    } else {
+      res.status(404).send("Not found");
     }
   }
 );
