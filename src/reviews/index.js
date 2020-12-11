@@ -10,9 +10,16 @@ const reviewsFilePath = path.join(__dirname, "reviews.json");
 router.get("/", async (req, res, next) => {
   try {
     const reviewsDataBase = await readDB(reviewsFilePath);
-    res.status(201).send(reviewsDataBase);
-  } catch (error) {
-    throw new Error(error);
+    if (reviewsDataBase.length > 0) {
+      res.status(201).send(reviewsDataBase);
+    } else {
+      const err = {};
+      err.httpStatusCode = 404;
+      err.message = "The database is empty :(";
+    }
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
   }
 });
 
@@ -25,11 +32,15 @@ router.get("/:id", async (req, res, next) => {
     if (selectedReview.length > 0) {
       res.status(201).send(selectedReview);
     } else {
-      throw new Error();
+      const err = {};
+      err.httpStatusCode = 404;
+      err.message = "The identifed review does not exist.";
+      next(err);
     }
     res.status(201).send(reviewsDataBase);
-  } catch (error) {
-    throw new Error(error);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
   }
 });
 
@@ -49,7 +60,10 @@ router.post(
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new Error(errors);
+      const err = {};
+      err.message = errors;
+      err.httpStatusCode = 400;
+      next(err);
     } else {
       const reviewsDataBase = await readDB(reviewsFilePath);
       const newReview = req.body;
@@ -81,10 +95,14 @@ router.put("/:id", async (req, res, next) => {
       await writeDB(reviewsFilePath, filteredReviews);
       res.status(201).send(filteredReviews);
     } else {
-      throw new Error();
+      const err = {};
+      err.httpStatusCode = 404;
+      err.message = "The review you are trting to edit does not exist";
+      next(err);
     }
-  } catch (error) {
-    throw new Error(error);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
   }
 });
 
@@ -101,10 +119,15 @@ router.delete("/:id", async (req, res, next) => {
       await writeDB(reviewsFilePath, filteredReviews);
       res.status(201).send(filteredReviews);
     } else {
-      throw new Error();
+      const err = {};
+      err.httpStatusCode = 404;
+      err.message =
+        "The review you are trying to delete does not exist. So... yay?";
+      next(err);
     }
-  } catch (error) {
-    throw new Error(error);
+  } catch (err) {
+    err.httpStatusCode = 404;
+    next(err);
   }
 });
 
