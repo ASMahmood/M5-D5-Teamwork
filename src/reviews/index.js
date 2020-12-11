@@ -76,35 +76,57 @@ router.post(
   }
 );
 
-router.put("/:id", async (req, res, next) => {
-  try {
-    const reviewsDataBase = await readDB(reviewsFilePath);
-    const selectedReview = reviewsDataBase.filter(
-      (review) => review._id === req.params.id
-    );
-    if (selectedReview.length > 0) {
-      console.log(selectedReview);
-      const filteredReviews = reviewsDataBase.filter(
-        (review) => review._id !== req.params.id
-      );
-      const alteredReview = req.body;
-      alteredReview._id = selectedReview[0]._id;
-      alteredReview.modifiedAt = new Date();
-      alteredReview.createdAt = selectedReview[0].createdAt;
-      filteredReviews.push(alteredReview);
-      await writeDB(reviewsFilePath, filteredReviews);
-      res.status(201).send(filteredReviews);
-    } else {
+router.put(
+  "/:id",
+  [
+    check("comment").exists().withMessage("You need to give a comment!"),
+    check("rate")
+      .isInt({ min: 1, max: 5 })
+      .withMessage("You need to give a rating between 1 and 5!"),
+    check("productID")
+      .exists()
+      .withMessage(
+        "You need to provide the ID of the product you're reviewing"
+      ),
+  ],
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
       const err = {};
-      err.httpStatusCode = 404;
-      err.message = "The review you are trting to edit does not exist";
+      err.message = errors;
+      err.httpStatusCode = 400;
       next(err);
+    } else {
+      try {
+        const reviewsDataBase = await readDB(reviewsFilePath);
+        const selectedReview = reviewsDataBase.filter(
+          (review) => review._id === req.params.id
+        );
+        if (selectedReview.length > 0) {
+          console.log(selectedReview);
+          const filteredReviews = reviewsDataBase.filter(
+            (review) => review._id !== req.params.id
+          );
+          const alteredReview = req.body;
+          alteredReview._id = selectedReview[0]._id;
+          alteredReview.modifiedAt = new Date();
+          alteredReview.createdAt = selectedReview[0].createdAt;
+          filteredReviews.push(alteredReview);
+          await writeDB(reviewsFilePath, filteredReviews);
+          res.status(201).send(filteredReviews);
+        } else {
+          const err = {};
+          err.httpStatusCode = 404;
+          err.message = "The review you are trting to edit does not exist";
+          next(err);
+        }
+      } catch (err) {
+        err.httpStatusCode = 404;
+        next(err);
+      }
     }
-  } catch (err) {
-    err.httpStatusCode = 404;
-    next(err);
   }
-});
+);
 
 router.delete("/:id", async (req, res, next) => {
   try {
