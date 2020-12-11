@@ -2,6 +2,7 @@ const express = require("express");
 const reviewsRoutes = require("./reviews");
 const fileRoutes = require("./files/upload");
 const productsRouter = require("./products");
+const cors = require("cors");
 const { join } = require("path");
 const {
   notFoundHandler,
@@ -14,6 +15,7 @@ const {
 const server = express();
 const port = 3077;
 
+server.use(cors());
 server.use(express.json());
 
 server.use(
