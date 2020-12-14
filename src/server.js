@@ -24,7 +24,7 @@ server.use(
 );
 
 server.use("/products", productsRouter);
-server.use("/reviews", reviewsRoutes);
+
 server.use("/files", fileRoutes);
 
 server.use(notFoundHandler);

@@ -2,10 +2,13 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const uniqid = require("uniqid");
+const reviewsRoutes = require("../reviews");
 
 const { readDB } = require("../lib/utilities");
 
 const router = express.Router();
+
+router.use("/reviews", reviewsRoutes);
 
 const productsFilePath = path.join(__dirname, "products.json");
 
